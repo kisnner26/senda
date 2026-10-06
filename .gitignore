@@ -28,3 +28,4 @@ server/public/storage
 
 # token local de acceso (secreto)
 .local-token
+.runtime/
