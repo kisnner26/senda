@@ -3,6 +3,8 @@ import SwiftUI
 struct RootView: View {
     @Bindable var store: TripStore
     @Bindable var recorder: Recorder
+    @State private var live = LivePublisher()
+    @AppStorage("liveSharing") private var liveSharing = false
     @State private var screen = Screen.overview
     @State private var showSettings = false
     @State private var selectedTrip: UUID?
@@ -41,8 +43,11 @@ struct RootView: View {
             case .overview:
                 DashboardView(trip: currentTrip, recorder: recorder, store: store) { screen = .map }
             case .map:
-                RouteMapView(trip: TripSelection.mapTrip(in: store.trips, activeID: recorder.activeID, selectedID: selectedTrip),
-                    isRecording: recorder.isRecording, locationStatus: recorder.status)
+                TimelineView(.periodic(from: .now, by: 5)) { context in
+                    RouteMapView(trip: TripSelection.mapTrip(in: store.trips, activeID: recorder.activeID, selectedID: selectedTrip),
+                        isRecording: recorder.isRecording, locationStatus: recorder.status,
+                        currentPosition: recorder.currentPosition.flatMap { abs(context.date.timeIntervalSince($0.timestamp)) <= 20 ? $0 : nil })
+                }
             case .history:
                 HistoryView(store: store) { trip in selectedTrip = trip.id; screen = .map }
             }
@@ -63,13 +68,26 @@ struct RootView: View {
         }
         .foregroundStyle(Palette.ink)
         .background(screen == .map ? Palette.sage : Palette.paper)
-        .sheet(isPresented: $showSettings) { SettingsView(store: store) }
+        .sheet(isPresented: $showSettings) { SettingsView(store: store, recorder: recorder, live: live) }
         .task {
-            recorder.onNetworkAvailable = { Task { await synchronizeIfConfigured() } }
+            recorder.onPositionUpdate = { live.update(position: recorder.currentPosition, recording: recorder.isRecording) }
+            recorder.onNetworkAvailable = {
+                live.retryStop()
+                live.update(position: recorder.currentPosition, recording: recorder.isRecording)
+                Task { await synchronizeIfConfigured() }
+            }
+            live.retryStop()
             await synchronizeIfConfigured()
         }
         .onChange(of: recorder.isRecording) { _, active in
-            if !active { Task { await synchronizeIfConfigured() } }
+            if !active {
+                if liveSharing { live.disable() }
+                Task { await synchronizeIfConfigured() }
+            }
+        }
+        .onChange(of: liveSharing) { _, enabled in
+            if enabled { live.update(position: recorder.currentPosition, recording: recorder.isRecording, force: true) }
+            else { live.disable() }
         }
         .onChange(of: scenePhase) { _, phase in
             if phase == .active { Task { await synchronizeIfConfigured() } }

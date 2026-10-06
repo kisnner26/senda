@@ -8,6 +8,9 @@ final class Recorder: NSObject, @preconcurrency CLLocationManagerDelegate {
     var isRecording = false
     var status = "listo para salir"
     var activeID: UUID?
+    var currentPosition: Measurement?
+    var preciseLocation = false
+    @ObservationIgnored var onPositionUpdate: (() -> Void)?
     @ObservationIgnored var onNetworkAvailable: (() -> Void)?
     private let manager = CLLocationManager()
     private let probe = NetworkProbe()
@@ -55,6 +58,7 @@ final class Recorder: NSObject, @preconcurrency CLLocationManagerDelegate {
             store.save()
             activeID = trip.id
             latestLocation = nil
+            currentPosition = nil
             lastAttempt = nil
             isRecording = true
             status = "buscando ubicación"
@@ -77,6 +81,7 @@ final class Recorder: NSObject, @preconcurrency CLLocationManagerDelegate {
         loop = nil
         task = nil
         manager.stopUpdatingLocation()
+        currentPosition = nil
         if let store, let index = store.trips.firstIndex(where: { $0.id == activeID }) {
             store.trips[index].endedAt = .now
             store.save()
@@ -87,6 +92,7 @@ final class Recorder: NSObject, @preconcurrency CLLocationManagerDelegate {
     }
 
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        preciseLocation = manager.accuracyAuthorization == .fullAccuracy
         if pendingStart, let store {
             pendingStart = false
             start(store: store)
@@ -99,7 +105,13 @@ final class Recorder: NSObject, @preconcurrency CLLocationManagerDelegate {
 
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard isRecording, let location = locations.last, location.horizontalAccuracy >= 0 else { return }
+        guard abs(location.timestamp.timeIntervalSinceNow) <= 20 else { return }
         latestLocation = location
+        preciseLocation = manager.accuracyAuthorization == .fullAccuracy
+        currentPosition = Measurement(timestamp: location.timestamp, latitude: location.coordinate.latitude,
+            longitude: location.coordinate.longitude, accuracy: location.horizontalAccuracy,
+            latency: nil, quality: .unknown, interface: interface)
+        onPositionUpdate?()
         if location.horizontalAccuracy > 100 {
             status = manager.accuracyAuthorization == .reducedAccuracy
                 ? "activa ubicación precisa en ajustes del iphone"
@@ -110,6 +122,22 @@ final class Recorder: NSObject, @preconcurrency CLLocationManagerDelegate {
 
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         status = "ubicación no disponible; esperando gps"
+    }
+
+    func requestPreciseLocation() async {
+        switch manager.authorizationStatus {
+        case .notDetermined:
+            manager.requestWhenInUseAuthorization()
+            status = "autoriza la ubicación y vuelve a solicitar precisión"
+        case .authorizedAlways, .authorizedWhenInUse:
+            do {
+                try await manager.requestTemporaryFullAccuracyAuthorization(withPurposeKey: "NetworkMapping")
+                preciseLocation = manager.accuracyAuthorization == .fullAccuracy
+                status = preciseLocation ? "ubicación precisa autorizada" : "activa ubicación precisa en ajustes del iphone"
+            } catch { status = "no se pudo solicitar precisión; revisa ajustes del iphone" }
+        default:
+            status = "permite la ubicación desde ajustes del iphone"
+        }
     }
 
     private func attempt() {

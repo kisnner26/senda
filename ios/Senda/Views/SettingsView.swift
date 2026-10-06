@@ -2,6 +2,9 @@ import SwiftUI
 
 struct SettingsView: View {
     var store: TripStore
+    var recorder: Recorder
+    var live: LivePublisher
+    @AppStorage("liveSharing") private var liveSharing = false
     @Environment(\.dismiss) private var dismiss
     @AppStorage("serverURL") private var server = ""
     @State private var token = CredentialStore.read()
@@ -35,6 +38,17 @@ struct SettingsView: View {
                     }.disabled(syncing)
                     Text(message.isEmpty ? "\(store.trips.count { !$0.synced && $0.endedAt != nil }) recorridos pendientes" : message)
                         .font(.caption).foregroundStyle(Palette.muted).accessibilityAddTraits(.updatesFrequently)
+                    VStack(alignment: .leading, spacing: 12) {
+                        Toggle("compartir ubicación en vivo", isOn: $liveSharing).tint(Palette.ink)
+                        Text(liveSharing ? (recorder.isRecording ? live.message : "se compartirá cuando inicies un recorrido") : "solo tú y quien tenga tu token pueden verla. al apagarla se retira de la web; sin conexión caduca en 90 s.")
+                            .font(.caption).foregroundStyle(Palette.muted)
+                        Button("solicitar ubicación precisa", systemImage: "location.viewfinder") {
+                            Task { await recorder.requestPreciseLocation() }
+                        }.font(.subheadline.bold()).padding(.vertical, 10)
+                        Text(recorder.status).font(.caption).foregroundStyle(Palette.muted)
+                        Text("compartir no aumenta la precisión del gps. el círculo del mapa muestra su margen de error.")
+                            .font(.caption).foregroundStyle(Palette.muted)
+                    }.padding(18).background(Palette.sage.opacity(0.5), in: .rect(cornerRadius: 18))
                     Divider()
                     Text("qué medimos").font(.headline)
                     Text("solicitudes https pequeñas a dos servicios independientes. medimos tiempo de respuesta y fallos, no intensidad de señal. más de 800 ms se considera lento. dos fallos seguidos indican una zona sospechosa.")

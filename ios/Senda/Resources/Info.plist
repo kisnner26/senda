@@ -11,5 +11,6 @@
 <key>UILaunchScreen</key><dict/>
 <key>UIBackgroundModes</key><array><string>location</string></array>
 <key>NSLocationWhenInUseUsageDescription</key><string>senda usa tu ubicación durante los recorridos para situar las mediciones de conexión en el mapa, incluso con la pantalla bloqueada.</string>
+<key>NSLocationTemporaryUsageDescriptionDictionary</key><dict><key>NetworkMapping</key><string>la ubicación precisa permite situar las mediciones y los puntos sin conexión sobre tu recorrido.</string></dict>
 <key>UISupportedInterfaceOrientations</key><array><string>UIInterfaceOrientationPortrait</string><string>UIInterfaceOrientationPortraitUpsideDown</string><string>UIInterfaceOrientationLandscapeLeft</string><string>UIInterfaceOrientationLandscapeRight</string></array>
 </dict></plist>
