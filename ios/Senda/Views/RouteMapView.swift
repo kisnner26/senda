@@ -1,0 +1,59 @@
+import SwiftUI
+import MapKit
+
+struct RouteMapView: View {
+    var trip: Trip?
+    @State private var position = MapCameraPosition.automatic
+
+    var body: some View {
+        VStack(spacing: 12) {
+            Map(position: $position) {
+                if let trip {
+                    ForEach(Array(trip.samples.enumerated()), id: \.element.id) { index, sample in
+                        if index > 0, sample.quality != .unknown, trip.samples[index - 1].quality != .unknown,
+                           sample.timestamp.timeIntervalSince(trip.samples[index - 1].timestamp) <= 45 {
+                            MapPolyline(coordinates: [trip.samples[index - 1].coordinate, sample.coordinate])
+                                .stroke(sample.quality.color, lineWidth: 5)
+                        }
+                        if sample.quality == .failed || sample.quality == .unknown || index == 0 || index == trip.samples.count - 1 {
+                            Annotation(sample.quality.label, coordinate: sample.coordinate) {
+                                Image(systemName: sample.quality.symbol)
+                                    .font(.caption2.bold()).foregroundStyle(.white)
+                                    .frame(width: 22, height: 22).background(sample.quality.color, in: .circle)
+                                    .overlay(Circle().stroke(.white, lineWidth: 2))
+                                    .accessibilityLabel(sample.quality.label)
+                            }.annotationTitles(.hidden)
+                        }
+                    }
+                }
+            }
+            .mapStyle(.standard(elevation: .flat, pointsOfInterest: .excludingAll))
+            .mapControls { MapCompass(); MapScaleView() }
+            .clipShape(.rect(cornerRadius: 24))
+            .overlay(alignment: .topLeading) {
+                Text("\(trip?.samples.count ?? 0) puntos / \(trip?.suspectedZones ?? 0) zonas")
+                    .font(.caption.monospaced()).padding(12).background(.regularMaterial, in: .capsule).padding(12)
+            }
+            .overlay {
+                if trip?.samples.isEmpty ?? true {
+                    VStack(spacing: 8) {
+                        Image(systemName: "location.slash").font(.title)
+                        Text("todavía no hay un rastro").font(.headline)
+                        Text("inicia un recorrido desde hoy").font(.caption)
+                    }.padding(24).background(Palette.paper, in: .rect(cornerRadius: 20))
+                }
+            }
+            HStack(spacing: 12) {
+                ForEach(ConnectionQuality.allCases, id: \.self) { quality in
+                    VStack(spacing: 5) {
+                        Image(systemName: quality.symbol).foregroundStyle(quality.color)
+                        Text(quality == .failed ? "fallo" : quality.label).font(.caption2)
+                    }.frame(maxWidth: .infinity)
+                }
+            }.padding(14).background(.white.opacity(0.3), in: .rect(cornerRadius: 18))
+            Text("dos fallos consecutivos indican una zona sospechosa. los huecos sin mediciones no cuentan como caídas.")
+                .font(.caption).foregroundStyle(Palette.muted).frame(maxWidth: .infinity, alignment: .leading)
+        }.padding(.horizontal, 24).padding(.bottom, 8)
+            .onChange(of: trip?.id) { position = .automatic }
+    }
+}
