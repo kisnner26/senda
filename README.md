@@ -6,6 +6,13 @@ registro de conectividad por ubicación para iphone, con un mapa web privado. in
 
 ## iphone
 
+<p align="center">
+  <img src="docs/iphone-hoy.jpg" width="260" alt="pantalla hoy: indicador circular de estabilidad, mediana de respuesta y distancia registrada">
+  <img src="docs/iphone-mapa.jpg" width="260" alt="pantalla mapa: puntos del recorrido y zonas sospechosas">
+  <img src="docs/iphone-archivo.jpg" width="260" alt="pantalla archivo: recorridos guardados y exportación">
+</p>
+<p align="center"><sub>capturas reales de un iPhone 15 Pro Max: hoy, mapa y archivo.</sub></p>
+
 abre `ios/Senda.xcodeproj` en xcode, selecciona tu equipo de firma y ejecuta en tu iphone con ios 26 o posterior. el proyecto incluye `ios/project.yml` para regenerarlo con `xcodegen generate`.
 
 inicia un recorrido y concede ubicación mientras se usa la app. aparece el indicador de ubicación en segundo plano. se registran posición, precisión, interfaz, tiempo de respuesta https y resultado. los recorridos se guardan localmente mediante escritura atómica; al terminar, al recuperar una ruta de red o al abrir la app se intenta sincronizar si configuraste el servidor. también puedes sincronizar manualmente y exportar json.
