@@ -1,6 +1,7 @@
 # compilación y cachés de Xcode
 build/
 build-sim/
+build-device/
 DerivedData/
 .build/
 *.xcuserstate

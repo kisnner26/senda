@@ -24,7 +24,7 @@ final class Recorder: NSObject, @preconcurrency CLLocationManagerDelegate {
         super.init()
         manager.delegate = self
         manager.desiredAccuracy = kCLLocationAccuracyBest
-        manager.distanceFilter = 15
+        manager.distanceFilter = kCLDistanceFilterNone
         manager.activityType = .otherNavigation
         manager.pausesLocationUpdatesAutomatically = false
         manager.allowsBackgroundLocationUpdates = true
@@ -100,6 +100,11 @@ final class Recorder: NSObject, @preconcurrency CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard isRecording, let location = locations.last, location.horizontalAccuracy >= 0 else { return }
         latestLocation = location
+        if location.horizontalAccuracy > 100 {
+            status = manager.accuracyAuthorization == .reducedAccuracy
+                ? "activa ubicación precisa en ajustes del iphone"
+                : "esperando gps preciso; intenta cerca de una ventana o afuera"
+        }
         attempt()
     }
 
