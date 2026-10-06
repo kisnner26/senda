@@ -23,7 +23,7 @@
 <section class="territory" aria-labelledby="map-title">
 <div class="section-top"><span class="eyebrow">02 / territorio</span><button id="fit-map" class="icon-button" aria-label="centrar el mapa en el recorrido">↗</button></div>
 <div class="territory-heading"><h2 id="map-title">donde la red<br>pierde el hilo.</h2><span class="coordinates" id="coordinates">sin ubicación</span></div>
-<div class="map-frame"><div id="route-map" aria-label="mapa de las mediciones del recorrido"></div><div class="map-empty" id="map-empty"><span aria-hidden="true">↗</span><strong>el territorio espera.</strong><p>inicia un recorrido desde tu iphone<br>y sincronízalo para verlo aquí.</p></div><div class="map-caption">rastro / <span id="map-points">0</span> puntos</div></div>
+<p class="live-status" id="live-status" role="status" hidden></p><div class="map-frame"><div id="route-map" aria-label="mapa de las mediciones del recorrido"></div><div class="map-empty" id="map-empty"><span aria-hidden="true">↗</span><strong>el territorio espera.</strong><p>inicia un recorrido desde tu iphone<br>y sincronízalo para verlo aquí.</p></div><div class="map-caption">rastro / <span id="map-points">0</span> puntos</div></div>
 <ul class="legend" aria-label="leyenda del mapa"><li><i class="stable"></i>estable</li><li><i class="slow"></i>lenta</li><li><i class="failed"></i>fallo</li><li><i class="unknown"></i>sin datos</li></ul>
 <div class="territory-stats"><div><span>zonas sospechosas</span><strong id="zones">00</strong></div><p>dos fallos seguidos dejan una marca.<br>un hueco sin datos no cuenta como caída.</p></div>
 </section>
