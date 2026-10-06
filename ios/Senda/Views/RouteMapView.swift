@@ -3,6 +3,8 @@ import MapKit
 
 struct RouteMapView: View {
     var trip: Trip?
+    var isRecording = false
+    var locationStatus = ""
     @State private var position = MapCameraPosition.automatic
 
     var body: some View {
@@ -38,8 +40,9 @@ struct RouteMapView: View {
                 if trip?.samples.isEmpty ?? true {
                     VStack(spacing: 8) {
                         Image(systemName: "location.slash").font(.title)
-                        Text("todavía no hay un rastro").font(.headline)
-                        Text("inicia un recorrido desde hoy").font(.caption)
+                        Text(isRecording ? "esperando el primer punto" : "este recorrido no tiene puntos").font(.headline)
+                        Text(isRecording ? locationStatus : "inicia un recorrido y espera una medición antes de terminarlo")
+                            .font(.caption).multilineTextAlignment(.center)
                     }.padding(24).background(Palette.paper, in: .rect(cornerRadius: 20))
                 }
             }
@@ -55,5 +58,8 @@ struct RouteMapView: View {
                 .font(.caption).foregroundStyle(Palette.muted).frame(maxWidth: .infinity, alignment: .leading)
         }.padding(.horizontal, 24).padding(.bottom, 8)
             .onChange(of: trip?.id) { position = .automatic }
+            .onChange(of: trip?.samples.isEmpty) { _, empty in
+                if empty == false { position = .automatic }
+            }
     }
 }

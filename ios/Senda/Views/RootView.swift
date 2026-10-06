@@ -41,7 +41,8 @@ struct RootView: View {
             case .overview:
                 DashboardView(trip: currentTrip, recorder: recorder, store: store) { screen = .map }
             case .map:
-                RouteMapView(trip: currentTrip)
+                RouteMapView(trip: TripSelection.mapTrip(in: store.trips, activeID: recorder.activeID, selectedID: selectedTrip),
+                    isRecording: recorder.isRecording, locationStatus: recorder.status)
             case .history:
                 HistoryView(store: store) { trip in selectedTrip = trip.id; screen = .map }
             }

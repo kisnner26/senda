@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		00238F35FFAA908D764FC414 /* TripSelection.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD4C4003FADB2EA49750CFDC /* TripSelection.swift */; };
 		0A937BB70BFCF2287A26CBB4 /* SendaApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D0E104236133588D2B0C2BD /* SendaApp.swift */; };
 		0FC423D7E3A6503BBF254BBF /* TripTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FCA314CAA1212EE77938CA9 /* TripTests.swift */; };
 		1ED0DF888A26FC17C3ED94AD /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C78D863E8530E6EA011335F5 /* SettingsView.swift */; };
@@ -59,6 +60,7 @@
 		BFBB7BB2C754C2B96F8F8369 /* Trip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Trip.swift; sourceTree = "<group>"; };
 		C78D863E8530E6EA011335F5 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		D2869B12131D65C85B962DBF /* Recorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Recorder.swift; sourceTree = "<group>"; };
+		DD4C4003FADB2EA49750CFDC /* TripSelection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripSelection.swift; sourceTree = "<group>"; };
 		DE9C9583B3D8D8EC870FC82B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		E6677976C9D09C0B055793AC /* ConnectionQuality.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionQuality.swift; sourceTree = "<group>"; };
 		F83ABC7B0DEFA2E3F71BBA07 /* NetworkProbe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkProbe.swift; sourceTree = "<group>"; };
@@ -163,6 +165,7 @@
 				6B5A2623F90D414061ECEA55 /* PreviewTrip.swift */,
 				49A3A750048D15E5485E772A /* Screen.swift */,
 				BFBB7BB2C754C2B96F8F8369 /* Trip.swift */,
+				DD4C4003FADB2EA49750CFDC /* TripSelection.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -270,6 +273,7 @@
 				1ED0DF888A26FC17C3ED94AD /* SettingsView.swift in Sources */,
 				747B5DE58E8341617F8D7788 /* StabilityDial.swift in Sources */,
 				80ED1E8C84718D95D19A61A1 /* Trip.swift in Sources */,
+				00238F35FFAA908D764FC414 /* TripSelection.swift in Sources */,
 				7B8B1E61A9B0DCAD1BE9457F /* TripStore.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

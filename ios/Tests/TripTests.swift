@@ -3,6 +3,13 @@ import Foundation
 @testable import Senda
 
 struct TripTests {
+    @Test func emptyRecentTripDoesNotHideRecordedRoute() {
+        let recorded = Trip(samples: [sample(.stable, at: 0, latency: 100)])
+        let empty = Trip()
+        #expect(TripSelection.mapTrip(in: [empty, recorded], activeID: nil, selectedID: nil)?.id == recorded.id)
+        #expect(TripSelection.mapTrip(in: [empty, recorded], activeID: empty.id, selectedID: nil)?.id == empty.id)
+        #expect(TripSelection.mapTrip(in: [empty, recorded], activeID: nil, selectedID: empty.id)?.id == empty.id)
+    }
     private func sample(_ quality: ConnectionQuality, at seconds: Double, latency: Double? = nil) -> Senda.Measurement {
         Senda.Measurement(timestamp: Date(timeIntervalSince1970: seconds), latitude: 12, longitude: -86,
             accuracy: 5, latency: latency, quality: quality, interface: "móvil")
