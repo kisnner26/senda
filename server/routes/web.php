@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\LiveLocationController;
 use App\Http\Controllers\TripController;
 use App\Http\Middleware\PrivateAccess;
 use Illuminate\Http\Request;
@@ -24,6 +25,7 @@ Route::post('/logout', function (Request $request) {
     return redirect('/login');
 });
 Route::middleware(PrivateAccess::class)->group(function () {
+    Route::get('/data/live', [LiveLocationController::class, 'show']);
     Route::get('/', fn () => view('dashboard'));
     Route::get('/data/trips', [TripController::class, 'index']);
     Route::get('/data/trips/{id}', [TripController::class, 'show'])->whereUuid('id');
