@@ -1,0 +1,30 @@
+# compilación y cachés de Xcode
+build/
+build-sim/
+DerivedData/
+.build/
+*.xcuserstate
+xcuserdata/
+*.log
+
+# dependencias
+server/vendor/
+server/node_modules/
+
+# entorno y datos locales del servidor
+server/.env
+server/.env.*
+!server/.env.example
+server/database/*.sqlite
+server/database/*.sqlite-*
+server/storage/logs/*
+server/storage/framework/cache/data/*
+server/storage/framework/sessions/*
+server/storage/framework/views/*.php
+server/public/hot
+server/public/storage
+
+.DS_Store
+
+# token local de acceso (secreto)
+.local-token
